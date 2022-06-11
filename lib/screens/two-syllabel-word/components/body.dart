@@ -15,13 +15,17 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  bool insideTarget = false;
+  String activeLetter = '';
+  String activeLetterChoice = '';
+  
   @override
   Widget build(BuildContext context) {
     MultipleChoice champ1;
     MultipleChoice champ2;
 
     void removeAll(MultipleChoice toRemove) {
-      multipleChoices.removeWhere((element) => element.choice == toRemove.choice);
+      // multipleChoices.removeWhere((element) => element.choice == toRemove.choice);
     }
 
     return SafeArea(
@@ -38,39 +42,40 @@ class _BodyState extends State<Body> {
               Row(
                 children: [
                   SpaceLetter(
-                    chaine: 'b', 
-                    context: context, 
-                    acceptChaine: 'champ1',
-                    onAccept: (data) => setState(() {
-                      removeAll(data);
-                      champ1 = data;
-                    }),
+                    chaine: jeuxmenu1.niveau[0]['correctletter']![0], 
+                    // context: context, 
+                    // acceptChaine: 'champ2',
+                    // onAccept: (data) => setState(() {
+                    // }),
                   ),
                   signe('+'),
                   SpaceLetter(
-                    chaine: 'a', 
-                    context: context, 
-                    acceptChaine: 'champ2',
-                    onAccept: (data) => setState(() {
-                      champ2 = data;
-                    }),
+                    chaine: jeuxmenu1.niveau[0]['correctletter']![1], 
+                    // context: context, 
+                    // acceptChaine: 'champ2',
+                    // onAccept: (data) => setState(() {
+                    // }),
                   ),
                   signe('='),
                   SpaceLetter(
-                    chaine: 'ba', 
-                    context: context, 
-                    acceptChaine: 'non',
-                    onAccept: (data) => {},
+                  chaine: jeuxmenu1.niveau[0]['correctletter']![2], 
+                  word: true,
+                  //   context: context, 
+                  //   acceptChaine: 'non',
+                  //   onAccept: (data) => {},
                   ),
                 ],
               ), 
+              CircleAvatar(
+                backgroundColor: Colors.white,
+                radius: 60.0,
+                backgroundImage: AssetImage('assets/images/flex.gif'),
+              ),
               Container(
                 child: GridView.builder(
-                  itemCount: multipleChoices.length,
+                  itemCount: jeuxmenu1.niveau[0]['choice']!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    //return Image.asset(images[index], fit: BoxFit.cover);
-                    // return choice(multipleChoices[index].choice);
-                    return DraggableWidget(chaine: multipleChoices[index]);
+                    return DraggableWidget(chaine: jeuxmenu1.niveau[0]['choice']![index]);
                   },
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10),
@@ -78,7 +83,7 @@ class _BodyState extends State<Body> {
                   shrinkWrap: true,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF4A3298),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),

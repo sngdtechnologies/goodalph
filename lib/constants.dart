@@ -64,11 +64,11 @@ double width(double inputWidth, BuildContext context) {
 }
 
 //Choice
-Text choice(String chaine) { 
+Text choice(String chaine, Color color) { 
   return Text(
     chaine, 
-    style: const TextStyle(
-      color: defaultColor, 
+    style: TextStyle(
+      color: color, 
       fontSize: 35), 
     textAlign: TextAlign.center,
   );

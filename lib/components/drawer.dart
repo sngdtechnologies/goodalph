@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:goodalph/components/drawer-tile.dart';
 import 'package:goodalph/constants.dart';
-import 'package:goodalph/screens/draggable_basic.dart';
 import 'package:goodalph/screens/home/home_screen.dart';
 import 'package:goodalph/screens/two-syllabel-word/two-syllabel-word.dart';
+import 'package:goodalph/screens/watch-video/watch-video.dart';
 
 class GoodAlphDrawer extends StatelessWidget {
   final String currentPage;
@@ -81,17 +81,17 @@ class GoodAlphDrawer extends StatelessWidget {
                   iconColor: kPrimaryColor,
                   title: menu2,
                   isSelected: currentPage == menu2 ? true : false),
-
-              // DrawerTile(
-              //     onTap: () {
-              //       if (currentPage != 'drag') {
-              //         Navigator.pop(context);
-              //         Navigator.pushNamed(context, DraggableBasic.routeName);
-              //       }
-              //     },
-              //     iconColor: kPrimaryColor,
-              //     title: 'drag',
-              //     isSelected: currentPage == "drag" ? true : false),
+              space,
+              DrawerTile(
+                  onTap: () {
+                    if (currentPage != menu6) {
+                      Navigator.pop(context);
+                      Navigator.pushNamed(context, WatchVideo.routeName);
+                    }
+                  },
+                  iconColor: kPrimaryColor,
+                  title: menu6,
+                  isSelected: currentPage == menu6 ? true : false),
             ],
           ),
         ),
