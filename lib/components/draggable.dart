@@ -12,7 +12,7 @@ class DraggableWidget extends StatefulWidget {
 }
 
 class _DraggableWidgetState extends State<DraggableWidget> {
-  // Offset position = new Offset(0.0, 0.0);
+  Offset position = new Offset(0.0, 0.0);
   bool wasAccepted = false;
   String activeLetterChoice = '';
 
@@ -41,25 +41,18 @@ class _DraggableWidgetState extends State<DraggableWidget> {
             ),
           ),
           child: item,
+          maxSimultaneousDrags: 1,
           childWhenDragging: new Opacity(opacity: 0.0, child: item),
-          onDragEnd: (data) {
-            print('letter onAccept in space letter ${data.wasAccepted}');
-            if(data.wasAccepted == true) {
-              setState(() => activeLetterChoice = '');
-            } else {
-              setState(() => activeLetterChoice = widget.chaine);
-            }
-            // print(data.wasAccepted);
-            // print('_DragBoxState.build -> offset ${offset}');
-            // setState(() => position = offset);
+          onDragCompleted: () {
+            // print('deplacement de ${activeLetterChoice}');
+            setState(() => activeLetterChoice = '');
           }
         );
       },
+      onWillAccept: (data) => activeLetterChoice == '',
       onAccept: (letter) => setState(() {
-        print('onAccept in list choice');
-        if(activeLetterChoice == '') {
-          activeLetterChoice = letter.toString();
-        }
+        activeLetterChoice = letter.toString();
+        // print('la lettre ${activeLetterChoice} a ete accepter');
       }),
     );
   }

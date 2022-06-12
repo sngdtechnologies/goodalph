@@ -33,7 +33,10 @@ class _NavbarState extends State<Navbar> {
           onPressed: () => (widget.icon == Icons.menu)
               ? Scaffold.of(context).openDrawer()
               : Navigator.pop(context)),
-      title: Text(widget.titre, style: TextStyle(color: Color(0xFF757575)),),
+      title: Text(
+        
+        widget.titre, 
+        style: TextStyle(color: Color(0xFF757575)),),
     );
   }
 }

@@ -11,14 +11,14 @@ class SpaceLetter extends StatefulWidget{
   final bool? word;
   // final BuildContext context;
   // final String acceptChaine;
-  // final Function onAccept;
+  final DragTargetAccept<String> onAccept;
 
   SpaceLetter({
     required this.chaine, 
     this.word = false, 
     // required this.context, 
     // required this.acceptChaine,
-    // required this.onAccept,
+    required this.onAccept,
   });
 
   @override
@@ -26,8 +26,9 @@ class SpaceLetter extends StatefulWidget{
 }
 
 class _SpaceLetterState extends State<SpaceLetter> {
-  bool wasAccepted = false;
+  bool iscorrect = false;
   String activeLetterChoice = '';
+  Color errorColor = Colors.redAccent;
 
   @override
   Widget build(BuildContext cont) {
@@ -53,17 +54,14 @@ class _SpaceLetterState extends State<SpaceLetter> {
                             ),
                           ),
                           child: item,
+                          maxSimultaneousDrags: 1,
                           childWhenDragging: new Opacity(opacity: 0.0, child: item),
-                          onDragEnd: (data) {
-                            print('letter onAccept in list choice ${data.wasAccepted}');
-                            if(data.wasAccepted == true) {
-                              setState(() => activeLetterChoice = '');
-                            } else {
-                              setState(() => activeLetterChoice = widget.chaine);
-                            }
-                            // print(data.wasAccepted);
-                            // print('_DragBoxState.build -> offset ${offset}');
-                            // setState(() => position = offset);
+                          onDragCompleted: () {
+                            // print('deplacement de ${activeLetterChoice}');
+                            setState(() {
+                              activeLetterChoice = '';
+                              iscorrect = false;
+                            });
                           }
                         ),
                       ],
@@ -72,16 +70,21 @@ class _SpaceLetterState extends State<SpaceLetter> {
                     height: 80.0,
                     padding: const EdgeInsets.all(5.0),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF4A3298),
+                      color: iscorrect == false ? errorColor : Color(0xFF4A3298),
                       borderRadius: BorderRadius.circular(20),
                     ),
                   );
                 },
+                onWillAccept: (data) => activeLetterChoice == '',
                 onAccept: (letter) => setState(() {
-                  print('onAccept in space');
-                  if(activeLetterChoice == '') {
-                    activeLetterChoice = letter.toString();
+                  // print('la lettre ${letter} a ete accepter oui');
+                  activeLetterChoice = letter.toString();
+                  if(letter == widget.chaine) {
+                    iscorrect = true;
+                  } else {
+                    iscorrect = false;
                   }
+                  widget.onAccept(letter as String);
                 }),
               )
             : Container(
