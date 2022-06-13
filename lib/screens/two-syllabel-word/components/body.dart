@@ -1,6 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/gestures.dart';
@@ -12,7 +15,14 @@ import 'package:goodalph/constants.dart';
 import 'package:goodalph/models/multiple-choice.dart';
 
 class Body extends StatefulWidget {
-  const Body({Key? key}) : super(key: key);
+  final Function(Object)? onLevel;
+  final Function(Object)? onEssai;
+  final Map<String, List<dynamic>> jeux;
+
+  Body({Key? key, 
+    this.onLevel, 
+    this.onEssai, 
+    required this.jeux}) : super(key: key);
 
   @override
   State<Body> createState() => _BodyState();
@@ -22,6 +32,8 @@ class _BodyState extends State<Body> {
   Uint8List? letter1;
   Uint8List? letter2;
   AudioPlayer player = AudioPlayer();
+
+  int niveau = 0, tentative = 0;
   
   String activeLetter = '';
   String activeLetterChoice = '';
@@ -30,6 +42,8 @@ class _BodyState extends State<Body> {
   bool firstletteriscorrect = false;
   bool secondletteriscorrect = false;
   Color errorColor = Colors.redAccent;
+
+  List<int> l = [];
   
   @override
   void initState() {
@@ -37,6 +51,14 @@ class _BodyState extends State<Body> {
       loadsound('assets/sound/A.mp3').then((value) => letter1 = value);
       loadsound('assets/sound/A.mp3').then((value) => letter2 = value);
     });
+    var rng = new Random();
+    int a;
+    for (var i = 0; l.length < 6; i++) {
+      a = rng.nextInt(6);
+      if(!l.contains(a)) {
+        l.add(a);
+      }
+    }
     super.initState();
   }
 
@@ -45,6 +67,30 @@ class _BodyState extends State<Body> {
     ByteData bytes = await rootBundle.load(asset); //load audio from assets
     audiobytes = bytes.buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes);
     return audiobytes;
+  }
+
+  timer(String element, int counter) {
+    Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if(element == 'error') image = 'assets/images/try.gif';
+        if(element == 'success') image = 'assets/images/success.gif';
+        if(element == 'other') image = 'assets/images/flex.gif';
+      });
+      counter--;
+      if (counter == 0) {
+        timer.cancel();
+        setState(() {
+          if(element == 'error') image = 'assets/images/flex.gif';
+          if(element == 'success' && firstletteriscorrect == true && secondletteriscorrect == true) {
+            image = 'assets/images/success.gif';
+            niveau++;
+            widget.onLevel!(niveau);
+          } else {
+            image = 'assets/images/flex.gif';
+          }
+        });
+      }
+    });
   }
 
   @override
@@ -64,49 +110,56 @@ class _BodyState extends State<Body> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   SpaceLetter(
-                    chaine: jeuxmenu1.niveau[0]['correctletter']![0], 
+                    chaine: widget.jeux['correctletter']![0], 
                     // context: context, 
                     // acceptChaine: 'champ2',
                     onAccept: (data) async {
-                      if(data == jeuxmenu1.niveau[0]['correctletter']![0]) {
+                      if(data == widget.jeux['correctletter']![0]) {
                         setState(() {
                           firstletteriscorrect = true;
-                          image = 'assets/images/success.gif';
+                          timer('success', 3);
                         });
                         int result = await player.playBytes(letter1!);
                       } else {
                         setState(() {
                           firstletteriscorrect = false;
-                          image = 'assets/images/try.gif';
+                          timer('error', 3);
+                          tentative++;
                         });
                       }
-                    }
+                      widget.onEssai!(tentative);
+                    },
+                    onDragCompleted: () => timer('other', 3),
                   ),
                   signe('+'),
                   SpaceLetter(
-                    chaine: jeuxmenu1.niveau[0]['correctletter']![1], 
+                    chaine: widget.jeux['correctletter']![1], 
                     // context: context, 
                     // acceptChaine: 'champ2',
                    onAccept: (data) async {
-                      if(data == jeuxmenu1.niveau[0]['correctletter']![1]) {
+                      if(data == widget.jeux['correctletter']![1]) {
                         setState(() {
                           secondletteriscorrect = true;
-                          image = 'assets/images/success.gif';
+                          timer('success', 3);
                         });
                         int result = await player.playBytes(letter2!);
                       } else {
                         setState(() {
                           secondletteriscorrect = false;
-                          image = 'assets/images/try.gif';
+                          timer('error', 3);
+                          tentative++;
                         });
                       }
-                    }
+                      widget.onEssai!(tentative);
+                    },
+                    onDragCompleted: () => timer('other', 3),
                   ),
                   signe('='),
                   SpaceLetter(
-                    chaine: jeuxmenu1.niveau[0]['correctletter']![2], 
+                    chaine: widget.jeux['correctletter']![2], 
                     word: true,
-                    onAccept: (data) {}
+                    onAccept: (data) {},
+                    onDragCompleted: () {},
                   ),
                 ],
               ), 
@@ -117,9 +170,9 @@ class _BodyState extends State<Body> {
               ),
               Container(
                 child: GridView.builder(
-                  itemCount: jeuxmenu1.niveau[0]['choice']!.length,
+                  itemCount: widget.jeux['choice']!.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return DraggableWidget(chaine: jeuxmenu1.niveau[0]['choice']![index]);
+                    return DraggableWidget(chaine: widget.jeux['choice']![l[index]]);
                   },
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3, mainAxisSpacing: 10, crossAxisSpacing: 10),

@@ -25,7 +25,7 @@ MultipleChoice jeuxmenu1 = MultipleChoice(
     },
     {
       'correctletter': ['c', 'a', 'ca'],
-      'choice': ['a', 'c', 's', 'i', 'o', 'b'],
+      'choice': ['a', 'c', 'h', 'o', 'n', 'p'],
     },
     {
       'correctletter': ['d', 'a', 'da'],

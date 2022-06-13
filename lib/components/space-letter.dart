@@ -12,6 +12,7 @@ class SpaceLetter extends StatefulWidget{
   // final BuildContext context;
   // final String acceptChaine;
   final DragTargetAccept<String> onAccept;
+  final Function? onDragCompleted;
 
   SpaceLetter({
     required this.chaine, 
@@ -19,6 +20,7 @@ class SpaceLetter extends StatefulWidget{
     // required this.context, 
     // required this.acceptChaine,
     required this.onAccept,
+    required this.onDragCompleted,
   });
 
   @override
@@ -56,13 +58,11 @@ class _SpaceLetterState extends State<SpaceLetter> {
                           child: item,
                           maxSimultaneousDrags: 1,
                           childWhenDragging: new Opacity(opacity: 0.0, child: item),
-                          onDragCompleted: () {
-                            // print('deplacement de ${activeLetterChoice}');
-                            setState(() {
-                              activeLetterChoice = '';
-                              iscorrect = false;
-                            });
-                          }
+                          onDragCompleted: () => setState(() {
+                            activeLetterChoice = '';
+                            iscorrect = false;
+                            widget.onDragCompleted!();
+                          }),
                         ),
                       ],
                     ),
