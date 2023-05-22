@@ -73,7 +73,7 @@ class _TwoSyllabelWordState extends State<TwoSyllabelWord> {
 
   generateKey() {
     setState(() {
-      keychaine = "Key " + Random().nextInt(5).toString();
+      keychaine = "Key " + Random().nextInt(1000000).toString();
     });
   }
 
