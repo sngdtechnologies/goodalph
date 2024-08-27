@@ -1,6 +1,6 @@
 # goodalph
 
-A new Flutter project.
+This is a flutter mobile app to learn alphabet English.
 
 ## Getting Started
 
